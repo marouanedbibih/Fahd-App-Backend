@@ -24,6 +24,18 @@ public class DepartementService {
 
         private final DepartementRepository departementRepository;
 
+        // Get list of departements for select dropdown
+        public MyResponse getListOfDepartementsForSelect() {
+                List<Departement> departements = departementRepository.findAll();
+                List<DepartementDTO> departementsDTO = departements.stream()
+                                .map(this::buildDepartementDTO)
+                                .toList();
+                return MyResponse.builder()
+                                .status(HttpStatus.OK)
+                                .data(departementsDTO)
+                                .build();
+        }
+
         // Delete departement
         public MyResponse deleteDepartement(Long id) throws MyNotFoundException, MyNotAcceptableException {
                 Departement departement = this.findDepartementById(id);

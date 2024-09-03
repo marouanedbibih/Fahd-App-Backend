@@ -19,6 +19,13 @@ public class DepartementController {
 
     private final DepartementService departementService;
 
+    // Endpoint to get list of departements for select dropdown
+    @GetMapping("/api/v1/departements/dropdown")
+    public ResponseEntity<MyResponse> getListOfDepartementsForSelect() {
+        MyResponse response = departementService.getListOfDepartementsForSelect();
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
     // Endpoint to get list of departements with pagination
     @GetMapping("/api/v1/departements")
     public ResponseEntity<MyResponse> getListOfDepartements(
@@ -67,5 +74,5 @@ public class DepartementController {
         MyResponse response = departementService.deleteDepartement(id);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
-    
+
 }

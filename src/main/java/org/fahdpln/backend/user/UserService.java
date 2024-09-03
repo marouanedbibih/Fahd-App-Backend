@@ -6,7 +6,6 @@ import org.fahdpln.backend.exception.MyAlreadyExistException;
 import org.fahdpln.backend.exception.MyNotFoundException;
 import org.fahdpln.backend.utils.MyError;
 import org.fahdpln.backend.utils.MyErrorResponse;
-import org.fahdpln.backend.utils.MyResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +18,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // Delete user 
+    // Delete user
     public void deleteUser(UserDTO userDTO) throws MyNotFoundException {
         // Find the user by id
-        User user = this.findUserById(userDTO.getId());
+        User user = this.findUserById(userDTO.getUserId());
         // Delete the user
         userRepository.delete(user);
     }
@@ -30,7 +29,7 @@ public class UserService {
     // Udapte user
     public User updateUser(UserDTO userDTO) throws MyNotFoundException, MyAlreadyExistException {
         // Find the user by id
-        User user = this.findUserById(userDTO.getId());
+        User user = this.findUserById(userDTO.getUserId());
         // Check if the user already exists in the database except the user with the
         // given id
         this.checkIfUserExistsExceptId(userDTO);
@@ -42,7 +41,7 @@ public class UserService {
     // Check if the user exists in the database except the user with the given id
     public void checkIfUserExistsExceptId(UserDTO userDTO) throws MyAlreadyExistException {
         // check if the username already exists
-        if (userRepository.existsByUsernameAndIdNot(userDTO.getUsername(), userDTO.getId())) {
+        if (userRepository.existsByUsernameAndIdNot(userDTO.getUsername(), userDTO.getUserId())) {
             throw new MyAlreadyExistException(MyErrorResponse.builder()
                     .errors(List.of(MyError.builder()
                             .key("username")
@@ -51,7 +50,7 @@ public class UserService {
                     .build());
         }
         // Check if the email already exists
-        if (userRepository.existsByEmailAndIdNot(userDTO.getEmail(), userDTO.getId())) {
+        if (userRepository.existsByEmailAndIdNot(userDTO.getEmail(), userDTO.getUserId())) {
             throw new MyAlreadyExistException(MyErrorResponse.builder()
                     .errors(List.of(MyError.builder()
                             .key("email")
@@ -60,7 +59,7 @@ public class UserService {
                     .build());
         }
         // Check if the phone number already exists
-        if (userRepository.existsByPhoneAndIdNot(userDTO.getPhone(), userDTO.getId())) {
+        if (userRepository.existsByPhoneAndIdNot(userDTO.getPhone(), userDTO.getUserId())) {
             throw new MyAlreadyExistException(MyErrorResponse.builder()
                     .errors(List.of(MyError.builder()
                             .key("phone")
@@ -127,10 +126,15 @@ public class UserService {
                 .username(userDTO.getUsername())
                 .name(userDTO.getName())
                 .email(userDTO.getEmail())
+                .phone(userDTO.getPhone())
                 .password(userDTO.getPassword())
                 .role(userDTO.getRole())
+                .createdAt(userDTO.getCreatedAt())
+                .updatedAt(userDTO.getUpdatedAt())
                 .build();
-
+        if (userDTO.getUserId() != null) {
+            user.setId(userDTO.getUserId());
+        }
         user = userRepository.save(user);
         return user;
     }
