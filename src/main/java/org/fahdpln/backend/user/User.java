@@ -3,6 +3,7 @@ package org.fahdpln.backend.user;
 import java.util.Collection;
 import java.util.List;
 
+import org.fahdpln.backend.employee.Employee;
 import org.fahdpln.backend.secretary.Secretary;
 import org.fahdpln.backend.utils.BasicEntity;
 import org.springframework.security.core.GrantedAuthority;
@@ -47,6 +48,10 @@ public class User extends BasicEntity implements UserDetails {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, optional = true)
     private Secretary secretary;
+
+    // Employee
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, optional = true)
+    private Employee employee;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
