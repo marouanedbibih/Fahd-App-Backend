@@ -1,6 +1,6 @@
 package org.fahdpln.backend.employee;
 
-import org.fahdpln.backend.department.Department;
+import org.fahdpln.backend.departement.Departement;
 import org.fahdpln.backend.user.User;
 import org.fahdpln.backend.utils.BasicEntity;
 
@@ -31,7 +31,7 @@ public class Employee extends BasicEntity {
     private String job;
     
     @ManyToOne
-    @JoinColumn(name = "department_id")
-    private Department department;
+    @JoinColumn(name = "departement_id")
+    private Departement departement;
 
 }
