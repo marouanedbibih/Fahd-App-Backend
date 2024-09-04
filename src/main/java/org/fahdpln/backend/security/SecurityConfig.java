@@ -55,6 +55,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/v1/employee/**").permitAll()
                     .requestMatchers("/api/v1/secretaries/**").permitAll()
                     .requestMatchers("/api/v1/secretary/**").permitAll()
+                    .requestMatchers("/api/v1/schedule/**").permitAll()
 
                     .anyRequest().authenticated();
         });

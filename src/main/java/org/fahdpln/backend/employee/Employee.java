@@ -1,6 +1,7 @@
 package org.fahdpln.backend.employee;
 
 import org.fahdpln.backend.departement.Departement;
+import org.fahdpln.backend.schedule.Schedule;
 import org.fahdpln.backend.user.User;
 import org.fahdpln.backend.utils.BasicEntity;
 
@@ -8,6 +9,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -15,6 +17,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -37,5 +41,9 @@ public class Employee extends BasicEntity {
     @ManyToOne
     @JoinColumn(name = "departement_id")
     private Departement departement;
+
+    // Schedule
+    @OneToMany(mappedBy = "employee")
+    private List<Schedule> schedules;
 
 }
