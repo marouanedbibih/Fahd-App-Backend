@@ -24,4 +24,6 @@ public class EmployeeDTO extends UserDTO {
 
     private LocalDate createdAt;
     private LocalDate updatedAt;
+
+    private Boolean isSecretary;
 }

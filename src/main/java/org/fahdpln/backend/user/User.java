@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.fahdpln.backend.employee.Employee;
-import org.fahdpln.backend.secretary.Secretary;
 import org.fahdpln.backend.utils.BasicEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -49,8 +48,6 @@ public class User extends BasicEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, optional = true)
-    private Secretary secretary;
 
     // Employee
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, optional = true)

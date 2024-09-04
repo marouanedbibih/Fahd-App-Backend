@@ -4,6 +4,7 @@ import org.fahdpln.backend.departement.Departement;
 import org.fahdpln.backend.user.User;
 import org.fahdpln.backend.utils.BasicEntity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -29,7 +30,10 @@ public class Employee extends BasicEntity {
     private User user;
 
     private String job;
-    
+
+    @Column(name = "is_secretary")
+    private Boolean isSecretary;
+
     @ManyToOne
     @JoinColumn(name = "departement_id")
     private Departement departement;

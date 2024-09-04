@@ -22,4 +22,7 @@ public class EmployeeRequest extends UserRequest {
 
     @NotNull(message = "Department ID is required")
     private Long departementId;
+
+    @NotNull(message = "Secretary status is required")
+    private Boolean isSecretary;
 }

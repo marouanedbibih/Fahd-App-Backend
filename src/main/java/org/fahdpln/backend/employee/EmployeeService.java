@@ -84,11 +84,14 @@ public class EmployeeService {
                 employee.setJob(request.getJob());
                 employee.setDepartement(departement);
                 employee.setUpdatedAt(user.getUpdatedAt());
+                employee.setIsSecretary(request.getIsSecretary());
                 employeeRepository.save(employee);
+
                 // Return response
                 return MyResponse.builder()
                                 .status(HttpStatus.OK)
                                 .message("Employee updated successfully")
+                                .data(this.buildEmployeeDTO(employee))
                                 .build();
         }
 
@@ -106,6 +109,7 @@ public class EmployeeService {
                                 .user(user)
                                 .job(request.getJob())
                                 .departement(departement)
+                                .isSecretary(request.getIsSecretary())
                                 .build();
                 employeeRepository.save(employee);
                 return MyResponse.builder()
@@ -193,6 +197,7 @@ public class EmployeeService {
                                 .departementName(employee.getDepartement().getName())
                                 .createdAt(employee.getCreatedAt())
                                 .updatedAt(employee.getUpdatedAt())
+                                .isSecretary(employee.getIsSecretary())
                                 .build();
         }
 
@@ -213,25 +218,35 @@ public class EmployeeService {
 
         // Build the UserDTO from the EmployeeRequest
         private UserDTO buildUserDTOFromRequest(EmployeeRequest request) {
-                return UserDTO.builder()
+                UserDTO userDTO = UserDTO.builder()
                                 .username(request.getUsername())
                                 .name(request.getName())
                                 .email(request.getEmail())
                                 .phone(request.getPhone())
                                 .password(request.getPassword())
-                                .role(UserRole.EMPLOYEE)
                                 .build();
+                if (request.getIsSecretary()) {
+                        userDTO.setRole(UserRole.SECRETARY);
+                } else {
+                        userDTO.setRole(UserRole.EMPLOYEE);
+                }
+                return userDTO;
         }
 
         private UserDTO buildUserDTOFromUpdateRequest(UpdateEmployeeRequest request) {
-                return UserDTO.builder()
+                UserDTO userDTO = UserDTO.builder()
                                 .username(request.getUsername())
                                 .name(request.getName())
                                 .email(request.getEmail())
                                 .phone(request.getPhone())
                                 .password(request.getPassword())
-                                .role(UserRole.EMPLOYEE)
                                 .build();
+                if (request.getIsSecretary()) {
+                        userDTO.setRole(UserRole.SECRETARY);
+                } else {
+                        userDTO.setRole(UserRole.EMPLOYEE);
+                }
+                return userDTO;
         }
 
         // Fins the employee by id
