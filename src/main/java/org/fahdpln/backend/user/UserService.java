@@ -18,6 +18,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+
+    // Fins user by username
+    public User findByUsername(String username) throws MyNotFoundException {
+        return userRepository.findByUsername(username).orElseThrow(
+                () -> new MyNotFoundException(MyErrorResponse.builder()
+                        .message("User not found with username: " + username)
+                        .build()));
+    }
+
     // Delete user
     public void deleteUser(UserDTO userDTO) throws MyNotFoundException {
         // Find the user by id

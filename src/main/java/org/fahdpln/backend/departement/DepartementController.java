@@ -2,6 +2,7 @@ package org.fahdpln.backend.departement;
 
 import org.fahdpln.backend.utils.MyResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ public class DepartementController {
     private final DepartementService departementService;
 
     // Endpoint to get list of departements for select dropdown
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SECRETARY')")
     @GetMapping("/api/v1/departements/dropdown")
     public ResponseEntity<MyResponse> getListOfDepartementsForSelect() {
         MyResponse response = departementService.getListOfDepartementsForSelect();
@@ -27,6 +29,7 @@ public class DepartementController {
     }
 
     // Endpoint to get list of departements with pagination
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/api/v1/departements")
     public ResponseEntity<MyResponse> getListOfDepartements(
             @RequestParam(defaultValue = "1") int page,
@@ -36,6 +39,7 @@ public class DepartementController {
     }
 
     // Endpoint to search departement by keyword
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/api/v1/departements/search")
     public ResponseEntity<MyResponse> searchDepartements(
             @RequestParam(defaultValue = "") String keyword,
@@ -46,6 +50,7 @@ public class DepartementController {
     }
 
     // Endpoint to get departement by id
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/api/v1/departement/{id}")
     public ResponseEntity<MyResponse> getDepartementById(@PathVariable Long id) {
         MyResponse response = departementService.getDepartementById(id);
@@ -53,6 +58,7 @@ public class DepartementController {
     }
 
     // Endpoint to create a new departement
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/api/v1/departement")
     public ResponseEntity<MyResponse> createDepartement(@RequestBody DepartementRequest request) {
         MyResponse response = departementService.createDepartement(request);
@@ -60,6 +66,7 @@ public class DepartementController {
     }
 
     // Endpoint to update a departement
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/api/v1/departement/{id}")
     public ResponseEntity<MyResponse> updateDepartement(
             @PathVariable Long id,
@@ -69,6 +76,7 @@ public class DepartementController {
     }
 
     // Endpoint to delete a departement
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/api/v1/departement/{id}")
     public ResponseEntity<MyResponse> deleteDepartement(@PathVariable Long id) {
         MyResponse response = departementService.deleteDepartement(id);

@@ -7,12 +7,14 @@ import org.fahdpln.backend.departement.Departement;
 import org.fahdpln.backend.departement.DepartementService;
 import org.fahdpln.backend.exception.MyAlreadyExistException;
 import org.fahdpln.backend.exception.MyNotFoundException;
+import org.fahdpln.backend.jwt.JwtUtils;
 import org.fahdpln.backend.user.User;
 import org.fahdpln.backend.user.UserDTO;
 import org.fahdpln.backend.user.UserRole;
 import org.fahdpln.backend.user.UserService;
 import org.fahdpln.backend.utils.MyErrorResponse;
 import org.fahdpln.backend.utils.MyResponse;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties.Jwt;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +32,7 @@ public class EmployeeService {
         private final EmployeeRepository employeeRepository;
         private final UserService userService;
         private final DepartementService departementService;
+        private final JwtUtils jwtUtils;
 
         // Delete employee
         @Transactional
@@ -120,10 +123,19 @@ public class EmployeeService {
         }
 
         // Search employees by keyword with pagination
-        public MyResponse searchEmployees(String keyword, int page, int size) {
+        public MyResponse searchEmployees(String keyword, int page, int size, String bearerToken) {
+                // Extract user from the bearer token
+                User user = jwtUtils.extractUserFromBeaererToken(bearerToken);
                 // Get page of employees
                 Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
-                Page<Employee> employeesPage = employeeRepository.searchEmployees(keyword, pageable);
+                Page<Employee> employeesPage;
+                if (user.getRole() == UserRole.SECRETARY) {
+                        Departement departement = user.getEmployee().getDepartement();
+                        employeesPage = employeeRepository.searchEmployeesInDepratement(keyword, departement, pageable);
+
+                } else {
+                        employeesPage = employeeRepository.searchEmployees(keyword, pageable);
+                }
 
                 // If no employees found
                 if (employeesPage.getContent().isEmpty()) {
@@ -152,10 +164,18 @@ public class EmployeeService {
         }
 
         // Get list of employees with pagination
-        public MyResponse getEmployees(int page, int size) {
+        public MyResponse getEmployees(int page, int size, String bearerToken) {
+                User user = jwtUtils.extractUserFromBeaererToken(bearerToken);
                 // Get Employees page
                 Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
-                Page<Employee> employeesPage = employeeRepository.findAll(pageable);
+                Page<Employee> employeesPage;
+                // Chec if the user is a secretary or admin
+                if (user.getRole() == UserRole.SECRETARY) {
+                        Departement departement = user.getEmployee().getDepartement();
+                        employeesPage = employeeRepository.findByDepartement(departement, pageable);
+                } else {
+                        employeesPage = employeeRepository.findAll(pageable);
+                }
 
                 if (employeesPage.getContent().isEmpty()) {
                         return MyResponse.builder()

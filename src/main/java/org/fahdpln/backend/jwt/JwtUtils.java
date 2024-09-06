@@ -1,6 +1,9 @@
 package org.fahdpln.backend.jwt;
 
+import org.fahdpln.backend.user.User;
 import org.fahdpln.backend.user.UserDTO;
+import org.fahdpln.backend.user.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +13,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-
 
 import java.security.Key;
 import java.util.Date;
@@ -23,6 +25,17 @@ import java.util.Map;
 public class JwtUtils {
     private static final String SECRET_KEY = "QAR1At+Vv3rNXrmiHGcZ0tG3+EPgdkeVi/HqjgcUbf8WcgdgpCXDTjb7CnIv9WEL";
 
+    @Autowired
+    private UserRepository userRepository;
+
+    // Find the user form the Bearer token
+    public User extractUserFromBeaererToken(String bearerToken) {
+        String token = bearerToken.substring(7);
+        String username = extractUsername(token);
+        User user = userRepository.findByUsername(username).orElse(null);
+        return user;
+    }
+
     // Extract username from token
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -33,6 +46,11 @@ public class JwtUtils {
         return extractClaim(token, claims -> claims.get("role", String.class));
     }
 
+    // Extract id from token
+    public Long extractId(String token) {
+        return extractClaim(token, claims -> claims.get("id", Long.class));
+    }
+
     // Create token with extra claims
     public String createToken(UserDTO userDto) {
 
@@ -41,7 +59,7 @@ public class JwtUtils {
         return Jwts
                 .builder()
                 .setClaims(extracClaims)
-                .setSubject(userDto.getEmail())
+                .setSubject(userDto.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)

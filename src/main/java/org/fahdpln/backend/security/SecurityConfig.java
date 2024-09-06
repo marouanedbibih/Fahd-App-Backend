@@ -43,20 +43,28 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
         // Authorize requests based on the URL and the role of the user
         http.authorizeHttpRequests(request -> {
-            // ((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)
-            // request.anyRequest()).authenticated();
             request
                     // Public endpoints
-                    .requestMatchers("/api/auth/login").permitAll()
+                    .requestMatchers("/api/v1/login").permitAll()
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                    .requestMatchers("/api/v1/departements/**").permitAll()
-                    .requestMatchers("/api/v1/departement/**").permitAll()
-                    .requestMatchers("/api/v1/employees/**").permitAll()
-                    .requestMatchers("/api/v1/employee/**").permitAll()
-                    .requestMatchers("/api/v1/secretaries/**").permitAll()
-                    .requestMatchers("/api/v1/secretary/**").permitAll()
-                    .requestMatchers("/api/v1/schedule/**").permitAll()
-
+                    // // Department endpoints
+                    .requestMatchers(HttpMethod.GET,"/api/v1/departements").hasAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.GET,"/api/v1/departements/search").hasAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.GET,"/api/v1/departement/**").hasAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.POST,"/api/v1/departement").hasAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.PUT,"/api/v1/departement/**").hasAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.DELETE,"/api/v1/departement/**").hasAuthority("ADMIN")
+                    .requestMatchers("/api/v1/departements/dropdown").hasAnyAuthority("ADMIN","SECRETARY")
+                    // // Employee endpoints
+                    .requestMatchers(HttpMethod.GET,"/api/v1/employees/**").hasAnyAuthority("ADMIN","SECRETARY")
+                    .requestMatchers(HttpMethod.GET,"/api/v1/employees/search").hasAnyAuthority("ADMIN","SECRETARY")
+                    .requestMatchers(HttpMethod.POST,"/api/v1/employee").hasAnyAuthority("ADMIN","SECRETARY")
+                    .requestMatchers(HttpMethod.PUT,"/api/v1/employee/**").hasAnyAuthority("ADMIN","SECRETARY")
+                    .requestMatchers(HttpMethod.DELETE,"/api/v1/employee/**").hasAnyAuthority("ADMIN","SECRETARY")
+                    // Schedule endpoints
+                    .requestMatchers(HttpMethod.GET, "/api/v1/employee/{employeeId}/schedules").hasAnyAuthority("ADMIN", "SECRETARY")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/employee/{employeeId}/schedules").hasAnyAuthority("ADMIN", "SECRETARY")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/employee/{employeeId}/schedules").hasAnyAuthority("ADMIN", "SECRETARY")
                     .anyRequest().authenticated();
         });
         // Set the session management to stateless

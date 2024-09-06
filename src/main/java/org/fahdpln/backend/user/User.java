@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @Data
@@ -51,6 +52,7 @@ public class User extends BasicEntity implements UserDetails {
 
     // Employee
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, optional = true)
+    @ToString.Exclude
     private Employee employee;
 
     @Override
