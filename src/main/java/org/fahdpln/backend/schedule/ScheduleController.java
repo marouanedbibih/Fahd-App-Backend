@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
@@ -39,6 +40,14 @@ public class ScheduleController {
     @DeleteMapping("/api/v1/employee/{employeeId}/schedules")
     public ResponseEntity<MyResponse> deleteAllSchedules(@PathVariable Long employeeId) {
         MyResponse response = scheduleService.deleteAllSchedules(employeeId);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    // Get all schedules for an employee
+    @GetMapping("/api/v1/employee/schedules")
+    public ResponseEntity<MyResponse> getEmployeeSchedulesByBaererToken(
+            @RequestHeader("Authorization") String bearerToken) {
+        MyResponse response = scheduleService.getOwnEmployeeSchedules(bearerToken);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 

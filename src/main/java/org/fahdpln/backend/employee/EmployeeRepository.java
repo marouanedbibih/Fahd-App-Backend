@@ -1,6 +1,9 @@
 package org.fahdpln.backend.employee;
 
+import java.util.Optional;
+
 import org.fahdpln.backend.departement.Departement;
+import org.fahdpln.backend.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,5 +33,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             "OR e.job LIKE %:keyword%) " +
             "AND e.departement = :departement")
     Page<Employee> searchEmployeesInDepratement(String keyword, Departement departement, Pageable pageable);
+
+    Optional<Employee> findByUser(User user);
 
 }
