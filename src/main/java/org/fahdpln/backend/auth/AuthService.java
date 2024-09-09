@@ -12,9 +12,12 @@ import org.fahdpln.backend.exception.MyAuthException;
 import org.fahdpln.backend.jwt.JwtUtils;
 import org.fahdpln.backend.user.User;
 import org.fahdpln.backend.user.UserDTO;
+import org.fahdpln.backend.user.UserRole;
 import org.fahdpln.backend.user.UserService;
 import org.fahdpln.backend.utils.MyErrorResponse;
 import org.fahdpln.backend.utils.MyResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +28,9 @@ public class AuthService {
     private final UserService userService;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
+
+    // Logger
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     /**
      * Login service
@@ -45,10 +51,18 @@ public class AuthService {
                     .username(user.getUsername())
                     .role(user.getRole())
                     .build();
+
+            // Set the department ID if the user is a secretary
+            if (user.getRole().equals(UserRole.SECRETARY)) {
+                userDTO.setDepartmentId(user.getEmployee().getDepartement().getId());
+
+            }
+
             // Create the JWT token
             String token = jwtUtils.createToken(userDTO);
             String role = userDTO.getRole().toString();
-            Map<String, Object> data = Map.of("token", token, "role", role);
+            Map<String, Object> data = Map.of("token", token, "role", role, "departementId", userDTO.getDepartmentId());
+
             // Return the BasicResponse with the JWT token
             return MyResponse.builder()
                     .data(data)
@@ -56,9 +70,10 @@ public class AuthService {
                     .build();
         } catch (Exception e) {
             return MyResponse.builder()
-                    .message("Invalid credentials")
+                    .message("Invalid credentials: " + e.getMessage())
                     .status(HttpStatus.UNAUTHORIZED)
                     .build();
+
         }
     }
 

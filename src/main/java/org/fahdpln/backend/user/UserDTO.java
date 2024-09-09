@@ -21,6 +21,7 @@ public class UserDTO {
     private LocalDate createdAt;
     private LocalDate updatedAt;
     private UserRole role;
+    private Long departmentId;
 
     // Equals Method
     @Override
