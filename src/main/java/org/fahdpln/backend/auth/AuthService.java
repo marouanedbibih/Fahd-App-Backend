@@ -61,7 +61,7 @@ public class AuthService {
             // Create the JWT token
             String token = jwtUtils.createToken(userDTO);
             String role = userDTO.getRole().toString();
-            Map<String, Object> data = Map.of("token", token, "role", role, "departementId", userDTO.getDepartmentId());
+            Map<String, Object> data = Map.of("token", token, "role", role, "user",userDTO);
 
             // Return the BasicResponse with the JWT token
             return MyResponse.builder()
